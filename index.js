@@ -8,7 +8,7 @@ const fetchData = async (searchTerm) => {               //fetch a list of movies
             s: searchTerm            // API specifies s for searching the index - www.omdbapi.com
         }                            // for the specification of the API
     });
-    if (response.data.Error){
+    if (response.data.Error){ // check for error
         console.log('No title with that name found!! try something else')
         return [];
     }
@@ -23,8 +23,8 @@ const onInput = async (event) => {                        // pass function fetch
     for (movie of movies){
         const div = document.createElement('div');
         div.innerHTML = `
-        <img src="${movie.Poster}"/>
         <h1>${movie.Title}</h1>
+        <img src="${movie.Poster}"/>
         `;
         document.querySelector('#target').appendChild(div);
     }
