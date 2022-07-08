@@ -1,0 +1,13 @@
+Here is your key: 95cacf70
+
+the API Website
+
+Usage
+Send all data requests to:
+
+http://www.omdbapi.com/?apikey=[yourkey]&
+
+Poster API requests:
+
+http://img.omdbapi.com/?apikey=[yourkey]&
+
