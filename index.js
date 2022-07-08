@@ -24,7 +24,7 @@ const onInput = async (event) => {                        // pass function fetch
         const div = document.createElement('div');
         div.innerHTML = `
         <h1>${movie.Title}</h1>
-        <img src="${movie.Poster}"/>
+        <img src="${movie.Poster}" alt=""/>
         `;
         document.querySelector('#target').appendChild(div);
     }
