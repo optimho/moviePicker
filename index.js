@@ -3,27 +3,28 @@
 const fetchData = async (searchTerm) => {
 };
 
-creatAutocomplete({
+createDropdownSelector({
     /*
 
 
      */
-    root: document.querySelector('.autocomplete-one'),
-    renderOption: (movie)=>{
-        const imgSRC = movie.Poster === 'N/A' ? '' : movie.Poster  //check that the movie has a link to a poster -
+    root: document.querySelector('.autocomplete-one'), //where to render the data
+    renderOption: (movie)=>{                                   //What the render looks like
+        const imgSRC = movie.Poster === 'N/A' ? '' : movie.Poster  //check that the movie has a link to a poster
+                                                                   // don't try and get a poster if none is available
         return `
             <img src="${imgSRC}" alt=""/>
             ${movie.Title} (${movie.Year})
             `;
     },
-    onOptionSelect (movie){
+    onOptionSelect (movie){                            // Select a movie from the dropdown
         console.log('movie ----', movie)
         onMovieSelect(movie);
     },
-    inputValue (movie){
+    inputValue (movie){                                // Write the name of the movie to the text box after selection
         return movie.Title;
     },
-    async fetchData(searchTerm){
+    async fetchData(searchTerm){                        // Search and return a list of movies - from an API
         //fetch a list of movies from a movie API site
         const response = await axios.get('http://www.omdbapi.com/', {
             params: {
@@ -47,19 +48,28 @@ const onMovieSelect = async (movie) =>{
     /*
     This function goes back to the API and gets more information.
      */
-    console.log('mivi--', movie)
+
         const response = await axios.get('http://www.omdbapi.com/', {  //fetch a list of movies from a movie API site
             params: {
                 apikey: '95cacf70',
                 i: movie.imdbID            // API specifies i getting movie with specific ID
             }                              // See the specification of the API on www.omdbapi.com
         });
-    console.log(response.data.Ratings[0].value)
-    console.log(response.data)
+
+
     document.querySelector('#summary').innerHTML = movieTemplate(response.data)
+    const {Source, Value} = response.data.Rating[0];
+    console.log(Value)
 }
 
 const movieTemplate = (movieDetail) =>{
+/*
+
+
+ */
+
+    console.log("movie Detail", movieDetail.Ratings.length)
+
 
     return `
     <article class="media">
@@ -84,7 +94,10 @@ const movieTemplate = (movieDetail) =>{
         <p class="title">${movieDetail.imdbRating}</p>
         <p class="subtitle">IMDB Rating</p>
     </article>        
-      
+    <article class="notification is-primary">
+        <p class="title">${movieDetail.Ratings[0].Value}</p>
+        <p class="subtitle">${movieDetail.Ratings[0].Source}</p>
+    </article>    
     <article class="notification is-primary">
         <p class="title">${movieDetail.imdbVotes}</p>
         <p class="subtitle">IMDB votes</p>

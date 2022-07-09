@@ -1,4 +1,4 @@
-const creatAutocomplete = ({
+const createDropdownSelector = ({
                                root,
                                renderOption,
                                onOptionSelect,
@@ -36,7 +36,7 @@ const creatAutocomplete = ({
             option.classList.add('dropdown-item');
             option.innerHTML = renderOption(item)
             option.addEventListener('click', () => {
-                console.log('~~~~',item)
+
 
                 dropdown.classList.remove('is-active')
                 input.value = inputValue(item);
