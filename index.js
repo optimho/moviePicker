@@ -1,85 +1,61 @@
 
 
-
-const fetchData = async (searchTerm) => {               //fetch a list of movies from a movie API site
-    const response = await axios.get('http://www.omdbapi.com/', {
-        params: {
-            apikey: '95cacf70',
-            s: searchTerm            // API specifies s for searching the index - www.omdbapi.com
-        }                            // for the specification of the API
-    });
-    if (response.data.Error){ // check for error
-        console.log('No title with that name found!! try something else')
-        return [];
-    }
-    return response.data.Search
-    // console.log(response.data);
+const fetchData = async (searchTerm) => {
 };
 
-const root = document.querySelector('.autocomplete')
-root.innerHTML = `
-<label><b>Search for a Movie</b></label>
-<input class="input" />
-<div class="dropdown">
-    <div class="dropdown-menu">
-        <div class="dropdown-content results">
-        </div>
-    </div>
-</div>
-`;
+creatAutocomplete({
+    /*
 
-const input = document.querySelector('input');
-const dropdown = document.querySelector('.dropdown');
-const resultsWrapper = document.querySelector('.results');
 
-const onInput = async (event) => {                        // pass function fetch data into a debounce function
-    const movies = await fetchData(event.target.value)    // fetch data from movie API site - search for a list of movies
-    if (!movies.length){                                  //if the text box is empty remove the dropdown box
-        dropdown.classList.remove('is-active')
-        return;
-    }
-
-    resultsWrapper.innerHTML=''                              //clear all the items in the dropdown
-    dropdown.classList.add('is-active');
-
-    for (movie of movies){                                   //Iterate through the list of movies returned from the API
-        const option = document.createElement('a');
+     */
+    root: document.querySelector('.autocomplete-one'),
+    renderOption: (movie)=>{
         const imgSRC = movie.Poster === 'N/A' ? '' : movie.Poster  //check that the movie has a link to a poster -
-        option.classList.add('dropdown-item');                     //make link blank if not, to prevent an  error
-        option.innerHTML = `
-        <img src="${imgSRC}" alt=""/>
-        ${movie.Title}
-        `;
-        option.addEventListener('click', () => {
-            input.value = movie.Title;
-            dropdown.classList.remove('is-active');
-            onMovieSelect(movie);
+        return `
+            <img src="${imgSRC}" alt=""/>
+            ${movie.Title} (${movie.Year})
+            `;
+    },
+    onOptionSelect (movie){
+        console.log('movie ----', movie)
+        onMovieSelect(movie);
+    },
+    inputValue (movie){
+        return movie.Title;
+    },
+    async fetchData(searchTerm){
+        //fetch a list of movies from a movie API site
+        const response = await axios.get('http://www.omdbapi.com/', {
+            params: {
+                apikey: '95cacf70',
+                s: searchTerm            // API specifies s for searching the index - www.omdbapi.com
+            }                            // for the specification of the API
         });
+        if (response.data.Error){ // check for error
+            console.log('No title with that name found!! try something else');
+            return [];
+        }
+        return response.data.Search;
+        // console.log(response.data);
 
-        resultsWrapper.appendChild(option);
     }
-};
-input.addEventListener('input', debounce(onInput,1000)); // listen to the text input box
-document.addEventListener('click', event => {
-    if (!root.contains(event.target)){
-        dropdown.classList.remove('is-active');
-    }
-
 });
+
+
 
 const onMovieSelect = async (movie) =>{
     /*
     This function goes back to the API and gets more information.
      */
-    console.log(movie)
-
+    console.log('mivi--', movie)
         const response = await axios.get('http://www.omdbapi.com/', {  //fetch a list of movies from a movie API site
             params: {
                 apikey: '95cacf70',
                 i: movie.imdbID            // API specifies i getting movie with specific ID
             }                              // See the specification of the API on www.omdbapi.com
         });
-
+    console.log(response.data.Ratings[0].value)
+    console.log(response.data)
     document.querySelector('#summary').innerHTML = movieTemplate(response.data)
 }
 
@@ -99,7 +75,19 @@ const movieTemplate = (movieDetail) =>{
                 <p>${movieDetail.Plot}</p>
            </div>     
         </div> 
-            
-    
-    </div>`
+    </article>
+    <article class="notification is-primary">
+        <p class="title">${movieDetail.Awards}</p>
+        <p class="subtitle">Awards</p>
+    </article>        
+    <article class="notification is-primary">
+        <p class="title">${movieDetail.imdbRating}</p>
+        <p class="subtitle">IMDB Rating</p>
+    </article>        
+      
+    <article class="notification is-primary">
+        <p class="title">${movieDetail.imdbVotes}</p>
+        <p class="subtitle">IMDB votes</p>
+    </article>         
+    `
 }
